@@ -1,0 +1,1051 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>html{box-sizing:border-box}*,*::before,*::after{box-sizing:inherit}body{margin:0}[hidden]{display:none!important}</style>
+<title>Zona cabinelor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+</head>
+<body>
+<style>
+/* Layout: a 16:9 film screen with its caption strip, transport controls, then chapters and legend — same family as the Raumplaner and Rücklauf pages */
+:root{
+  --bg:#f4f4f1;--paper:#ffffff;--fg:#1f1f1d;--muted:#6b6a64;--line:#d9d8d2;
+  --accent:#4a43a8;--accent-soft:rgba(74,67,168,.12);--no:#c7372f;--yes:#0f7a5c;--opt:#b8661a;
+  --p11:#0f7a5c;--help:#d85a30;--run:#5b4fd1;--cust:#8a887f;--gw:#d4537e;--gm:#2f6db5;--gk:#e0a21b;--gu:#b9b2a3;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#17171a;--paper:#202024;--fg:#ececea;--muted:#a2a19b;--line:#3a3a3f;
+  --accent:#9d97f0;--accent-soft:rgba(157,151,240,.16);--no:#f09595;--yes:#5dcaa5;--opt:#ef9f27;
+  --p11:#5dcaa5;--help:#f0997b;--run:#afa9ec;--cust:#b4b2a9;--gw:#ed93b1;--gm:#85b7eb;--gk:#f2c14e;--gu:#c9c3b6;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#17171a;--paper:#202024;--fg:#ececea;--muted:#a2a19b;--line:#3a3a3f;
+  --accent:#9d97f0;--accent-soft:rgba(157,151,240,.16);--no:#f09595;--yes:#5dcaa5;--opt:#ef9f27;
+  --p11:#5dcaa5;--help:#f0997b;--run:#afa9ec;--cust:#b4b2a9;--gw:#ed93b1;--gm:#85b7eb;--gk:#f2c14e;--gu:#c9c3b6;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px}
+.wrap{max-width:1040px;margin:0 auto;display:grid;gap:14px}
+.meta{font-family:var(--mono);font-size:11.5px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+h1{font-size:21px;font-weight:500;margin:0;text-wrap:balance}
+.screen{background:var(--paper);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+#cv{width:100%;max-width:100%;aspect-ratio:16/9;display:block;background:#e9e8e2}
+.cap{border-top:1px solid var(--line);padding:12px 16px 14px;display:grid;gap:4px;min-height:122px;align-content:start}
+.chap{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.verdict{font-family:var(--sans);font-weight:600;letter-spacing:.04em;font-size:11px;padding:1px 8px;border-radius:999px;border:1px solid currentColor}
+.verdict.no{color:var(--no)}.verdict.yes{color:var(--yes)}.verdict.opt{color:var(--opt)}
+.cap h2{margin:0;font-size:17px;font-weight:500;text-wrap:balance}
+.cap p{margin:0;color:var(--muted);max-width:70ch}
+.ctrl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button{font:500 13px var(--sans);color:var(--fg);background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:7px 12px;cursor:pointer}
+button:hover{border-color:var(--muted)}
+button:focus-visible,.bar:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#play{background:var(--accent);border-color:var(--accent);color:var(--paper);min-width:96px}
+.time{font-family:var(--mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;margin-left:auto}
+.bar{position:relative;height:10px;background:var(--line);border-radius:5px;cursor:pointer;overflow:hidden;touch-action:none}
+.bar .fill{position:absolute;inset:0 auto 0 0;background:var(--accent);width:0}
+.bar .tick{position:absolute;top:0;bottom:0;width:2px;background:var(--paper)}
+.cols{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:720px){.cols{grid-template-columns:minmax(0,1fr)}}
+.sec h3{margin:0 0 8px;font:500 11.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.chapters{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.chapters button{width:100%;text-align:left;font-weight:400;display:flex;gap:10px;align-items:baseline}
+.chapters button[aria-current="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.chapters small{font-family:var(--mono);color:var(--muted);font-size:11px;flex:none;width:2.8em;font-variant-numeric:tabular-nums}
+.chapters em{font-style:normal;font-size:11px;font-weight:600;margin-left:auto;flex:none}
+.chapters em.no{color:var(--no)}.chapters em.yes{color:var(--yes)}.chapters em.opt{color:var(--opt)}
+.legend{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:13.5px}
+.legend li{display:flex;align-items:center;gap:8px}
+.sw{width:12px;height:12px;border-radius:50%;flex:none}
+.sq{width:12px;height:8px;border-radius:2px;flex:none}
+.note{font-size:12.5px;color:var(--muted);margin:10px 0 0}
+.note a{color:var(--accent);font-weight:500}
+body.rec{padding:0;margin:0;background:#e9e8e2;overflow:hidden}
+body.rec .wrap{display:block;max-width:none}
+body.rec .wrap>*:not(.screen){display:none}
+body.rec .screen{border:0;border-radius:0}
+body.rec .cap{display:none}
+body.rec #cv{width:1920px;height:1080px}
+</style>
+
+<div class="wrap">
+  <div><div class="meta">Zara Iulius Cluj · Zona cabinelor</div><h1>Puncte de îmbunătățire</h1></div>
+  <div class="screen">
+    <canvas id="cv" aria-label="Animație 3D a zonei cabinelor cu punctele de îmbunătățire"></canvas>
+    <div class="cap" aria-live="polite"><div class="chap"><span id="chap"></span><span id="verdict" class="verdict" hidden></span></div><h2 id="ttl"></h2><p id="txt"></p></div>
+  </div>
+  <div class="ctrl">
+    <button id="prev" type="button">Înapoi</button>
+    <button id="play" type="button">Redă</button>
+    <button id="next" type="button">Înainte</button>
+    <span class="time" id="time">0:00 / 0:00</span>
+  </div>
+  <div class="bar" id="bar" tabindex="0" role="slider" aria-label="Progres" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="fill" id="fill"></div></div>
+  <div class="cols">
+    <section class="sec"><h3>Capitole</h3><ol class="chapters" id="chapters"></ol></section>
+    <section class="sec"><h3>Legendă</h3>
+      <ul class="legend">
+        <li><i class="sw" style="background:var(--p11)"></i>Coleg 11 · stația de la cabine</li>
+        <li><i class="sw" style="background:var(--help)"></i>Ajutor · întăriri (secțiunea 3)</li>
+        <li><i class="sw" style="background:var(--run)"></i>Runner (secțiunea 1)</li>
+        <li><i class="sw" style="background:var(--cust)"></i>Client</li>
+        <li><i class="sq" style="background:var(--gu)"></i>Articole nesortate de la cabine</li>
+        <li><i class="sq" style="background:var(--gw)"></i>Woman 1 · 2 · 3</li>
+        <li><i class="sq" style="background:var(--gm)"></i>Man</li>
+        <li><i class="sq" style="background:var(--gk)"></i>Kids</li>
+      </ul>
+      <p class="note">Camerele, culoarul și burro-urile urmează modelul 3D (Raumplaner). Cabinele, mesele din zona de vânzare și casa sunt schematice.</p>
+      <p class="note"><a href="zona-cabinelor.mp4" download>Descarcă videoclipul (MP4, 1080p)</a></p>
+    </section>
+  </div>
+</div>
+
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js';
+
+const REC = /[?&]rec\b/.test(location.search);
+if (REC) document.body.classList.add('rec');
+const PI = Math.PI, H = PI / 2;
+
+/* ---------- film palette (the film keeps one light look, like a video) ---------- */
+const C = {
+  bg:'#e4e2db', store:'#eeede8', room:'#e0ded5', hall:'#efeee8', cabFloor:'#ebe9e2',
+  wall:'#e3e0d7', wallTop:'#3d3c39', steel:'#4b4a46', dark:'#34332f', skin:'#e2c4a6',
+  curtain:'#7c7064', bench:'#b9b2a3', table:'#d9d5ca', counter:'#bcae9b',
+  p11:'#0f7a5c', help:'#d85a30', run:'#5b4fd1', cust:'#8f8d85', cash:'#1d8a9e',
+  w:['#d4537e','#c4466f','#e06f96'], m:['#2f6db5','#3f7fc8','#275d9c'], k:['#e0a21b','#ebb43e','#cd900e'],
+  u:['#cfc8b8','#8f8a80','#3a3936','#ece8de','#7b8a6a','#b7a48a','#5c6470','#a99f93'],
+  no:'#c7372f', yes:'#0f7a5c', warn:'#d9822b', opt:'#b8661a', accent:'#4a43a8', fg:'#1f1f1d', muted:'#6b6a64',
+  panel:'rgba(255,255,255,0.95)', line:'#d9d8d2'
+};
+const SANS = '"IBM Plex Sans", system-ui, sans-serif', MONO = '"IBM Plex Mono", ui-monospace, monospace';
+
+/* ---------- math ---------- */
+const cl = t => Math.max(0, Math.min(1, t));
+const seg = (s, a, b) => cl((s - a) / (b - a));
+const ease = t => (1 - Math.cos(PI * cl(t))) / 2;
+const lerp = (a, b, t) => a + (b - a) * t;
+const hash = i => { const x = Math.sin(i * 12.9898 + 78.233) * 43758.5453; return x - Math.floor(x); };
+function angPi(a, b, t) { let d = b - a; while (d > H) d -= PI; while (d < -H) d += PI; return a + d * t; }
+function ang2(a, b, t) { let d = b - a; while (d > PI) d -= 2 * PI; while (d < -PI) d += 2 * PI; return a + d * t; }
+function mkPath(pts) { const L = [0]; for (let i = 1; i < pts.length; i++) L.push(L[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1])); return { pts, L, len: L[L.length - 1] }; }
+function at(P, d) {
+  const { pts, L, len } = P, n = pts.length;
+  if (n === 1) return pts[0];
+  if (d <= 0) { const a = pts[0], b = pts[1], l = L[1] || 1; return [a[0] + (b[0] - a[0]) * d / l, a[1] + (b[1] - a[1]) * d / l]; }
+  if (d >= len) { const a = pts[n - 2], b = pts[n - 1], l = (L[n - 1] - L[n - 2]) || 1, e = d - len; return [b[0] + (b[0] - a[0]) * e / l, b[1] + (b[1] - a[1]) * e / l]; }
+  let i = 1; while (L[i] < d) i++;
+  const u = (d - L[i - 1]) / ((L[i] - L[i - 1]) || 1);
+  return [pts[i - 1][0] + (pts[i][0] - pts[i - 1][0]) * u, pts[i - 1][1] + (pts[i][1] - pts[i - 1][1]) * u];
+}
+function dirAt(P, d, w = 0.25) { const a = at(P, d - w), b = at(P, d + w); return Math.atan2(b[1] - a[1], b[0] - a[0]); }
+
+/* walk a person along a polyline; u in 0..1 */
+function walk(p, pts, u) {
+  const P = mkPath(pts), d = ease(u) * P.len, q = at(P, d);
+  p.x = q[0]; p.z = q[1];
+  p.face = dirAt(P, Math.min(Math.max(d, 0.16), P.len - 0.16), 0.15);
+  if (u > 0 && u < 1) { p.moving = true; p.phase = d * 5.5; }
+}
+/* move a rack with a person pushing (behind) or towing (in front) */
+function move(r, p, pts, u, o = {}) {
+  const mode = o.mode || 'push', a0 = o.a0 ?? r.a, a1 = o.a1 ?? r.a;
+  const P = mkPath(pts), uu = ease(u), d = uu * P.len, q = at(P, d);
+  r.x = q[0]; r.z = q[1];
+  const dir = dirAt(P, d, 0.3);
+  let a;
+  if (o.keep) a = angPi(a0, a1, uu);
+  else { const bl = 0.45; a = angPi(a0, dir, ease(cl(d / bl))); a = angPi(a1, a, ease(cl((P.len - d) / bl))); }
+  r.a = a;
+  const rel = dir - a, ext = Math.abs(Math.cos(rel)) * (r.len || 1) / 2 + Math.abs(Math.sin(rel)) * 0.25, off = ext + 0.3;
+  const sg = mode === 'push' ? -1 : 1;
+  if (p) {
+    p.x = r.x + Math.cos(dir) * off * sg; p.z = r.z + Math.sin(dir) * off * sg; p.face = dir;
+    p.pose = mode;
+    if (u > 0 && u < 1) { p.moving = true; p.phase = d * 5.5; }
+  }
+}
+function moveStart(r, pts, o = {}) { const rr = { ...r }, p = {}; move(rr, p, pts, 0, o); return [p.x, p.z]; }
+function moveEnd(r, pts, o = {}) { const rr = { ...r }, p = {}; move(rr, p, pts, 1, o); return [p.x, p.z]; }
+
+/* ---------- three.js scene ---------- */
+const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+const gl = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+gl.setPixelRatio(1);
+gl.shadowMap.enabled = true; gl.shadowMap.type = THREE.PCFSoftShadowMap;
+const scene = new THREE.Scene(); scene.background = new THREE.Color(C.bg);
+const cam = new THREE.PerspectiveCamera(30, 16 / 9, 0.1, 200);
+scene.add(new THREE.HemisphereLight(0xffffff, 0xc4bdad, 1.55));
+const sun = new THREE.DirectionalLight(0xfffaf0, 1.75);
+sun.position.set(5.5, 14, 8.5); sun.target.position.set(2.5, 0, 0.8);
+sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, { left: -9, right: 9, top: 9, bottom: -9, near: 1, far: 40 });
+sun.shadow.bias = -0.0006; sun.shadow.normalBias = 0.02; sun.shadow.radius = 3;
+scene.add(sun, sun.target);
+
+const mats = new Map();
+function mat(c, o = {}) { const k = c + JSON.stringify(o); if (!mats.has(k)) mats.set(k, new THREE.MeshLambertMaterial({ color: c, ...o })); return mats.get(k); }
+function box(w, h, d, c, x, y, z, parent = scene, cast = true) {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), typeof c === 'string' ? mat(c) : c);
+  m.position.set(x, y, z); m.castShadow = cast; m.receiveShadow = true; parent.add(m); return m;
+}
+function slab(x0, z0, x1, z1, c, y = 0) {
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(x1 - x0, z1 - z0), mat(c));
+  m.rotation.x = -H; m.position.set((x0 + x1) / 2, y, (z0 + z1) / 2); m.receiveShadow = true; scene.add(m); return m;
+}
+function wall(x0, z0, x1, z1, h = 1.05, t = 0.08) {
+  const L = Math.hypot(x1 - x0, z1 - z0), g = new THREE.Group();
+  g.position.set((x0 + x1) / 2, 0, (z0 + z1) / 2); g.rotation.y = -Math.atan2(z1 - z0, x1 - x0);
+  box(L + t, h, t, C.wall, 0, h / 2, 0, g);
+  box(L + t, 0.025, t + 0.006, C.wallTop, 0, h + 0.012, 0, g, false);
+  scene.add(g); return g;
+}
+
+/* floors */
+slab(-3.2, -5.6, 8.2, 8.2, C.store, 0);
+slab(1.0, -4.5, 5.1, -0.5, C.cabFloor, 0.002);
+slab(2.3, -0.5, 3.8, 2.5, C.hall, 0.002);
+slab(0, 0.2, 2.3, 2.5, C.room, 0.003);
+slab(3.8, 0, 5.1, 2.5, C.room, 0.003);
+/* faint 0.5 m grid in the two rooms, like the plan sheet */
+{
+  const pts = [];
+  for (let x = 0.5; x < 2.3; x += 0.5) pts.push(x, 0.006, 0.2, x, 0.006, 2.5);
+  for (let z = 0.5; z < 2.5; z += 0.5) pts.push(0, 0.006, z, 2.3, 0.006, z);
+  for (let x = 4.3; x < 5.1; x += 0.5) pts.push(x, 0.006, 0, x, 0.006, 2.5);
+  for (let z = 0.5; z < 2.5; z += 0.5) pts.push(3.8, 0.006, z, 5.1, 0.006, z);
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pts, 3));
+  scene.add(new THREE.LineSegments(g, new THREE.LineBasicMaterial({ color: 0xc9c6bb })));
+}
+/* Camera 2: closed room, door 1 m towards the culoar */
+wall(0, 0.2, 2.3, 0.2); wall(0, 0.2, 0, 2.5); wall(0, 2.5, 2.3, 2.5); wall(2.3, 0.2, 2.3, 1.5);
+/* Camera 1: open to the culoar and to the sales floor */
+wall(3.8, 0, 5.1, 0); wall(5.1, 0, 5.1, 2.5);
+/* cabins (schematic): 4 per side along the culoar */
+const CABS = [];
+for (let i = 0; i < 4; i++) { const z1 = -0.5 - i, z0 = z1 - 1; CABS.push({ n: i + 1, side: 'W', x0: 1.0, x1: 2.3, z0, z1, cz: (z0 + z1) / 2 }); }
+for (let i = 0; i < 4; i++) { const z1 = -0.5 - i, z0 = z1 - 1; CABS.push({ n: i + 5, side: 'E', x0: 3.8, x1: 5.1, z0, z1, cz: (z0 + z1) / 2 }); }
+wall(1.0, -4.5, 1.0, -0.5); wall(5.1, -4.5, 5.1, -0.5); wall(2.3, -4.5, 3.8, -4.5);
+for (const z of [-0.5, -1.5, -2.5, -3.5, -4.5]) { wall(1.0, z, 2.3, z); wall(3.8, z, 5.1, z); }
+for (const c of CABS) {
+  const bx = c.side === 'W' ? c.x0 + 0.22 : c.x1 - 0.22;
+  box(0.36, 0.45, 0.56, C.bench, bx, 0.225, c.cz);
+  const cur = box(0.03, 1.02, 1, C.curtain, c.side === 'W' ? 2.29 : 3.81, 0.52, c.cz);
+  const items = [];
+  for (let i = 0; i < 3; i++) { const m = box(0.26, 0.055, 0.3, '#fff', bx, 0.48 + i * 0.06, c.cz, scene); m.visible = false; items.push(m); }
+  c.cur = cur; c.items = items; c.bx = bx;
+}
+/* Camera 1 fixtures from the model: organizer 8, bügelwagen 9, extinguisher 10 */
+box(0.4, 1.35, 0.12, C.dark, 4.04, 0.15 + 0.675, 0.11);
+{
+  const g = new THREE.Group(); g.position.set(4.705, 0, 0.27); scene.add(g);
+  box(0.43, 0.04, 0.4, C.steel, 0, 0.07, 0, g); box(0.43, 0.025, 0.4, C.steel, 0, 1.08, 0, g);
+  for (const [x, z] of [[-0.2, -0.18], [0.2, -0.18], [-0.2, 0.18], [0.2, 0.18]]) box(0.02, 1.02, 0.02, C.steel, x, 0.57, z, g);
+  for (let k = 0; k < 9; k++) box(0.012, 0.42, 0.34, '#9b978d', -0.18 + k * 0.045, 0.85, 0, g);
+}
+{ const m = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.075, 0.55, 16), mat('#d6423f')); m.position.set(4.98, 0.275, 1.77); m.castShadow = true; scene.add(m); }
+box(0.3, 0.65, 0.3, C.dark, 2.04, 0.325, 0.58);
+/* sales floor (schematic): section tables and the cash desk */
+const SECT = { W: { x: 0.9, z: 5.7, k: 'w', label: 'Woman 1 · 2 · 3' }, M: { x: 3.05, z: 6.4, k: 'm', label: 'Man' }, K: { x: 5.2, z: 5.7, k: 'k', label: 'Kids' } };
+for (const key in SECT) {
+  const s = SECT[key];
+  box(1.3, 0.72, 0.8, C.table, s.x, 0.36, s.z);
+  box(1.34, 0.035, 0.84, C[s.k][0], s.x, 0.737, s.z);
+  s.items = [];
+  for (let i = 0; i < 8; i++) { const m = box(0.3, 0.05, 0.26, C[s.k][i % 3], s.x - 0.42 + (i % 4) * 0.28, 0.78 + Math.floor(i / 4) * 0.055, s.z, scene); m.visible = false; s.items.push(m); }
+}
+const cashDesk = new THREE.Group(); scene.add(cashDesk); box(0.62, 1.0, 1.9, C.counter, -1.25, 0.5, 4.3, cashDesk); box(0.3, 0.18, 0.36, C.dark, -1.25, 1.09, 4.0, cashDesk);
+
+/* ---------- racks (burro) ---------- */
+const CAP = 20;
+const gGarm = new THREE.BoxGeometry(1, 1, 1);
+function makeRack(len = 1) {
+  const g = new THREE.Group();
+  const rod = new THREE.CylinderGeometry(0.014, 0.014, 1.47, 8);
+  for (const sx of [-1, 1]) {
+    const x = sx * len / 2;
+    const up = new THREE.Mesh(rod, mat(C.steel)); up.position.set(x, 0.795, 0); up.castShadow = true; g.add(up);
+    box(0.04, 0.035, 0.52, C.steel, x, 0.06, 0, g);
+    for (const sz of [-1, 1]) { const w = new THREE.Mesh(new THREE.SphereGeometry(0.03, 8, 6), mat('#222')); w.position.set(x, 0.03, sz * 0.24); g.add(w); }
+  }
+  const rail = new THREE.Mesh(new THREE.CylinderGeometry(0.013, 0.013, len, 8), mat(C.steel)); rail.rotation.z = H; rail.position.y = 1.53; rail.castShadow = true; g.add(rail);
+  const low = rail.clone(); low.position.y = 0.08; g.add(low);
+  const garments = [];
+  for (let i = 0; i < CAP; i++) { const m = new THREE.Mesh(gGarm, mat('#fff')); m.castShadow = true; m.receiveShadow = true; m.visible = false; g.add(m); garments.push(m); }
+  g.userData = { len, garments }; scene.add(g); return g;
+}
+const rackObjs = new Map();
+function applyRack(id, r) {
+  let g = rackObjs.get(id);
+  if (!g) { g = makeRack(r.len || 1); rackObjs.set(id, g); }
+  g.visible = true; g.position.set(r.x, 0, r.z); g.rotation.y = -r.a;
+  const { len, garments } = g.userData, n = Math.min(CAP, r.items.length), step = (len - 0.06) / CAP;
+  for (let i = 0; i < CAP; i++) {
+    const m = garments[i];
+    if (i >= n) { m.visible = false; continue; }
+    const k = r.items[i], pal = C[k] || C.u, hh = hash(i * 7.31 + (k === 'u' ? 0 : 3));
+    m.visible = true; m.material = mat(pal[Math.floor(hh * pal.length)]);
+    const gh = 0.6 + 0.18 * hash(i * 13.7 + 1), gw = 0.38 + 0.06 * hash(i * 5.3 + 2);
+    m.scale.set(0.034, gh, gw); m.position.set(-len / 2 + 0.03 + step * (i + 0.5), 1.5 - gh / 2, 0);
+  }
+}
+
+/* ---------- people ---------- */
+function makePerson(color, ghost) {
+  const o = ghost ? { transparent: true, opacity: 0.42 } : {};
+  const g = new THREE.Group(), body = mat(color, o), skin = mat(C.skin, o), dark = mat(C.dark, o);
+  const legs = [], arms = [];
+  const legGeo = new THREE.CapsuleGeometry(0.065, 0.62, 4, 8), armGeo = new THREE.CapsuleGeometry(0.045, 0.46, 4, 8);
+  for (const sz of [-1, 1]) {
+    const hip = new THREE.Group(); hip.position.set(0, 0.86, sz * 0.085);
+    const leg = new THREE.Mesh(legGeo, dark); leg.position.y = -0.41; leg.castShadow = !ghost; hip.add(leg); g.add(hip); legs.push(hip);
+  }
+  const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.17, 0.4, 4, 12), body); torso.position.y = 1.17; torso.scale.x = 0.78; torso.castShadow = !ghost; g.add(torso);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.105, 16, 12), skin); head.position.y = 1.6; head.castShadow = !ghost; g.add(head);
+  const hair = new THREE.Mesh(new THREE.SphereGeometry(0.108, 16, 8, 0, 2 * PI, 0, 1.3), dark); hair.position.y = 1.615; hair.rotation.z = 0.35; g.add(hair);
+  for (const sz of [-1, 1]) {
+    const sh = new THREE.Group(); sh.position.set(0, 1.38, sz * 0.205);
+    const arm = new THREE.Mesh(armGeo, body); arm.position.y = -0.27; arm.castShadow = !ghost; sh.add(arm); g.add(sh); arms.push(sh);
+  }
+  const carry = []; const cg = new THREE.Group(); cg.position.set(0.36, 1.06, 0); g.add(cg);
+  for (let i = 0; i < 8; i++) { const m = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.05, 0.34), mat('#fff')); m.position.y = i * 0.054; m.castShadow = true; m.visible = false; cg.add(m); carry.push(m); }
+  const pda = new THREE.Group(); pda.position.set(0.36, 1.02, 0.2); g.add(pda);
+  const pb = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.025, 0.16), mat('#24262b')); pda.add(pb);
+  const scr = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.005, 0.1), new THREE.MeshBasicMaterial({ color: 0x7fe0c0 })); scr.position.y = 0.014; pda.add(scr);
+  g.userData = { legs, arms, carry, pda };
+  scene.add(g); return g;
+}
+const COLS = { e11: 'p11', help: 'help', run: 'run', cash: 'cash' };
+const peopleObjs = new Map();
+function applyPerson(id, p) {
+  let g = peopleObjs.get(id);
+  if (!g) { g = makePerson(C[COLS[id] || 'cust'], id === 'cash'); peopleObjs.set(id, g); }
+  const { legs, arms, carry, pda } = g.userData;
+  g.visible = true;
+  const sw = p.moving ? Math.sin(p.phase || 0) : 0;
+  g.position.set(p.x, p.moving ? Math.abs(sw) * 0.025 : 0, p.z);
+  g.rotation.y = -(p.face || 0);
+  legs[0].rotation.z = sw * 0.5; legs[1].rotation.z = -sw * 0.5;
+  let a0 = -sw * 0.4, a1 = sw * 0.4;
+  const hasCarry = p.carry && p.carry.length;
+  if (p.pose === 'push') { a0 = a1 = 1.25; }
+  else if (p.pose === 'tow') { a0 = a1 = -0.4; }
+  else if (p.pose === 'work') { const w = Math.sin((p.wt || 0) * 7); a0 = 0.95 + 0.45 * w; a1 = p.pda ? 0.8 : 0.95 - 0.45 * w; }
+  else if (hasCarry) { a0 = a1 = 0.95; }
+  else if (p.pda) { a1 = 0.8; }
+  arms[0].rotation.z = a0; arms[1].rotation.z = a1;
+  for (let i = 0; i < carry.length; i++) {
+    const m = carry[i], k = hasCarry && i < p.carry.length ? p.carry[i] : null;
+    m.visible = !!k; if (k) m.material = mat((C[k] || C.u)[i % 3]);
+  }
+  pda.visible = !!p.pda && !hasCarry && p.pose !== 'push' && p.pose !== 'tow';
+}
+
+/* floor highlight zones */
+const zonePool = [];
+for (let i = 0; i < 6; i++) {
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.3, depthWrite: false }));
+  m.rotation.x = -H; m.position.y = 0.012; m.visible = false; scene.add(m); zonePool.push(m);
+}
+
+/* ---------- state ---------- */
+const HOME = {
+  r6: { x: 4.05, z: 0.68, a: H }, r7: { x: 4.56, z: 2.2, a: 0 },
+  b1: { x: 0.34, z: 0.81, a: H }, b2: { x: 0.61, z: 2.16, a: 0 }, b3: { x: 1.35, z: 0.57, a: 0, len: 0.9 }
+};
+const E11 = [4.5, 1.55];
+const U = n => Array(Math.max(0, Math.round(n))).fill('u');
+const Wn = n => Array(Math.max(0, Math.round(n))).fill('w');
+function base() {
+  const R = {};
+  for (const k in HOME) R[k] = { ...HOME[k], items: [] };
+  R.r6.items = U(9); R.r6.label = '6';
+  R.r7.items = Wn(11); R.r7.label = '7';
+  const cab = CABS.map(c => ({ occ: [1, 2, 4, 6, 7].includes(c.n), items: { 3: 2, 5: 1, 8: 2 }[c.n] || 0, tag: null }));
+  return { R, P: { e11: { x: E11[0], z: E11[1], face: PI, pda: true, pose: 'idle' } }, cab, zones: [], hud: [], sect: [0, 0, 0] };
+}
+
+/* coleg 11 sorts from burro 6 to burro 7: one round every P seconds, 2 items each */
+function work11(st, s, o = {}) {
+  const e = st.P.e11, P = o.period || 2.4, k = Math.floor(s / P), u = (s % P) / P;
+  const A = E11, B = [4.52, 1.0], Cc = [4.64, 1.68];
+  if (u < 0.2) walk(e, [A, B], u / 0.2);
+  else if (u < 0.38) { e.x = B[0]; e.z = B[1]; e.face = PI; e.pose = 'work'; e.wt = s; }
+  else if (u < 0.6) walk(e, [B, Cc], (u - 0.38) / 0.22);
+  else if (u < 0.78) { e.x = Cc[0]; e.z = Cc[1]; e.face = H; e.pose = 'work'; e.wt = s; }
+  else { walk(e, [Cc, A], (u - 0.78) / 0.22); if (u > 0.97) e.face = PI; }
+  if (u >= 0.3 && u < 0.7) { e.carry = o.kinds ? o.kinds(k) : ['w', 'w']; }
+  return { rounds: k + (u >= 0.7 ? 1 : 0), took: k + (u >= 0.3 ? 1 : 0) };
+}
+/* a customer walks in, hangs items on the culoar side of burro 6, walks on */
+function custHang(st, id, s, t0, t1, from, spot, exit, n = 2) {
+  if (s < t0 || s > t1) return false;
+  const u = (s - t0) / (t1 - t0), p = { pose: 'idle' };
+  if (u < 0.42) { walk(p, [from, spot], u / 0.42); p.carry = U(n); }
+  else if (u < 0.56) { p.x = spot[0]; p.z = spot[1]; p.face = 0; p.pose = 'work'; p.wt = s; if (u < 0.49) p.carry = U(n); }
+  else walk(p, [spot, exit], (u - 0.56) / 0.44);
+  st.P[id] = p;
+  return u >= 0.49;
+}
+function custWalk(st, id, s, t0, t1, pts) {
+  if (s < t0 || s > t1) return;
+  const p = { pose: 'idle' }; walk(p, pts, (s - t0) / (t1 - t0)); st.P[id] = p;
+}
+const chip = (text, x, y, z, o = {}) => ({ t: 'chip', text, at: [x, y, z], ...o });
+const bubble = (text, x, z, o = {}) => ({ t: 'bubble', text, at: [x, 2.0, z], ...o });
+const zone = (x0, z0, x1, z1, c, alpha) => ({ x0, z0, x1, z1, c, alpha });
+
+/* camera presets: target, distance, yaw (0 = from the sales floor), pitch */
+const K = (tx, tz, dist, yaw, pitch) => ({ tx, tz, dist, yaw, pitch });
+function camKeys(keys, s) {
+  if (s <= keys[0][0]) return keys[0][1];
+  for (let i = 1; i < keys.length; i++) if (s <= keys[i][0]) { const [s0, A] = keys[i - 1], [s1, B] = keys[i], t = ease((s - s0) / (s1 - s0)); return { tx: lerp(A.tx, B.tx, t), tz: lerp(A.tz, B.tz, t), dist: lerp(A.dist, B.dist, t), yaw: lerp(A.yaw, B.yaw, t), pitch: lerp(A.pitch, B.pitch, t) }; }
+  return keys[keys.length - 1][1];
+}
+
+/* ---------- scenes ---------- */
+const SC = [];
+
+SC.push({ chap: 'Introducere', noLabels: true, title: 'Zona cabinelor', text: 'Modelul 3D al zonei: Camera 1 este stația de la cabine, Camera 2 este spațiul de rezervă, iar între ele este culoarul de 1,50 m.', dur: 10,
+  cam: s => camKeys([[0, K(2.9, -0.6, 16.5, -0.55, 1.02)], [10, K(2.8, 0.6, 13.6, -0.25, 0.95)]], s),
+  f(s) {
+    const st = base(); work11(st, s);
+    custWalk(st, 'c1', s, 0.5, 9.5, [[3.05, -4.0], [3.0, -0.8], [3.2, 2.9], [2.6, 6.8]]);
+    if (custHang(st, 'c2', s, 2.5, 9.0, [3.05, -3.6], [3.52, 0.85], [3.05, -3.6], 2)) st.R.r6.items = U(11);
+    st.card = s < 4.4 ? { t: 'title', a: 'Zona cabinelor', b: '6 puncte de îmbunătățire · Zara Iulius Cluj', alpha: 1 - seg(s, 3.8, 4.4) } : null;
+    const L = [
+      [4.6, 'Cabine', 3.05, 1.4, -2.6],
+      [5.1, 'Culoar · 1,50 m', 3.05, 0.05, 1.95],
+      [5.6, 'Camera 1 · stația de la cabine', 4.7, 1.4, -0.1],
+      [6.1, 'Burro 6 · primire', 3.45, 1.75, 0.3],
+      [6.6, 'Burro 7 · ieșire', 4.9, 1.75, 2.75],
+      [7.1, 'Camera 2 · rezervă', 1.15, 1.6, 1.0],
+      [7.6, 'Zona de vânzare', 3.05, 0.05, 4.4]
+    ];
+    for (const [t0, text, x, y, z] of L) if (s > t0) st.hud.push(chip(text, x, y, z, { alpha: seg(s, t0, t0 + 0.35), c: C.accent }));
+    return st;
+  } });
+
+/* 1 · helper */
+const HALL_BUSY_B2 = { x: 2.72, z: 1.25, a: H };
+SC.push({ chap: '1 · Persoana de ajutor', verdict: 'no', title: 'Ajutorul nu lucrează pe culoar', text: 'Dacă a doua persoană procesează burro-ul pe culoar, blochează drumul clienților spre cabine și înapoi.', dur: 9,
+  cam: s => camKeys([[0, K(3.2, 0.9, 9.4, -0.36, 0.92)], [9, K(3.1, 0.8, 8.8, -0.26, 0.9)]], s),
+  f(s) {
+    const st = base(); const R = st.R; work11(st, s);
+    R.r6.items = U(20 - Math.floor(s / 1.6)); R.r6.meter = true;
+    Object.assign(R.b2, HALL_BUSY_B2); R.b2.items = Wn(3 + Math.floor(s / 1.6));
+    const h = st.P.help = { x: 3.42, z: 0.95, pose: 'work', wt: s, tag: 'Ajutor', tagC: C.help };
+    const ph = (s % 1.6) / 1.6; h.face = ph < 0.5 ? 0 : PI; if (ph > 0.25 && ph < 0.75) h.carry = ['u'];
+    const a = st.P.c1 = { pose: 'idle' }; walk(a, [[3.05, -3.6], [3.08, -0.15]], seg(s, 0.3, 3.4));
+    const b = st.P.c2 = { pose: 'idle' }; walk(b, [[3.3, 5.8], [3.25, 2.75]], seg(s, 1.0, 4.4)); b.face = -H;
+    if (s > 3.6) st.hud.push(bubble('Clienții așteaptă', 3.08, -0.15, { c: C.no, alpha: seg(s, 3.6, 4.0), icon: 'wait' }));
+    if (s > 2.2) {
+      const pulse = 0.18 + 0.12 * Math.sin(s * 5) ** 2;
+      st.zones.push(zone(2.3, -0.4, 3.8, 2.5, C.no, pulse * seg(s, 2.2, 2.8)));
+      st.hud.push(chip('Culoar blocat', 2.55, 0.05, 2.1, { c: C.no, alpha: seg(s, 2.2, 2.6), strong: true }));
+    }
+    return st;
+  } });
+
+SC.push({ chap: '1 · Persoana de ajutor', verdict: 'yes', title: 'Ajutorul ia burro-ul plin în Camera 2', text: 'Ajutorul aduce un burro gol în locul celui plin, apoi procesează rapid burro-ul plin în Camera 2. Culoarul rămâne liber.', dur: 18,
+  cam: s => camKeys([[0, K(2.5, 1.6, 9.8, -0.22, 0.96)], [9, K(2.7, 1.3, 9.4, -0.3, 0.94)], [18, K(2.3, 1.4, 9.2, -0.16, 0.98)]], s),
+  f(s) {
+    const st = base(); const R = st.R, h = st.P.help = { pose: 'idle', tag: 'Ajutor', tagC: C.help };
+    const r6 = R.r6, b2 = R.b2; r6.items = U(20); r6.meter = s < 6; b2.items = [];
+    work11(st, s, { period: 2.6 });
+    const pB2 = [[0.61, 2.16], [1.7, 2.06], [2.55, 2.0], [2.95, 1.75], [2.95, 1.55]], oB2 = { mode: 'tow', a0: 0, a1: H };
+    const pR6 = [[4.05, 0.68], [3.45, 0.62]], oR6 = { mode: 'tow', keep: true, a0: H, a1: H };
+    const pIn = [[2.95, 1.55], [3.98, 1.72], [4.05, 0.68]], oIn = { mode: 'push', keep: true, a0: H, a1: H };
+    const pOut = [[3.45, 0.62], [3.35, 1.55], [3.0, 2.0], [2.2, 2.06], [1.3, 2.12], [0.61, 2.16]], oOut = { mode: 'push', a0: H, a1: 0 };
+    const sB2 = moveStart(b2, pB2, oB2), eB2 = moveEnd(b2, pB2, oB2);
+    const sR6 = moveStart(r6, pR6, oR6);
+    const r6out = { ...r6, ...{ x: 3.45, z: 0.62 } };
+    const sIn = moveStart({ ...b2, x: 2.95, z: 1.55, a: H }, pIn, oIn), eIn = moveEnd({ ...b2, x: 2.95, z: 1.55, a: H }, pIn, oIn);
+    const sOut = moveStart(r6out, pOut, oOut), eOut = moveEnd(r6out, pOut, oOut);
+    if (s < 2.6) walk(h, [[3.0, 6.2], [2.95, 2.8], [2.3, 2.05], sB2], s / 2.6);
+    else if (s < 5.2) move(b2, h, pB2, (s - 2.6) / 2.6, oB2);
+    else {
+      Object.assign(b2, { x: 2.95, z: 1.55, a: H });
+      if (s < 6.0) walk(h, [eB2, [3.35, 0.68], sR6], (s - 5.2) / 0.8);
+      else if (s < 7.2) move(r6, h, pR6, (s - 6.0) / 1.2, oR6);
+      else {
+        Object.assign(r6, { x: 3.45, z: 0.62, a: H });
+        if (s < 8.2) walk(h, [[2.9, 0.62], [2.4, 1.0], sIn], (s - 7.2) / 1.0);
+        else if (s < 10.0) move(b2, h, pIn, (s - 8.2) / 1.8, oIn);
+        else {
+          Object.assign(b2, { x: 4.05, z: 0.68, a: H });
+          if (s < 10.9) walk(h, [eIn, [3.62, 1.5], [2.95, 1.2], [2.95, 0.0], sOut], (s - 10.0) / 0.9);
+          else if (s < 13.6) move(r6, h, pOut, (s - 10.9) / 2.7, oOut);
+          else {
+            Object.assign(r6, { x: 0.61, z: 2.16, a: 0 });
+            const u = s - 13.6, P = 1.1, ph = (u % P) / P, k = Math.floor(u / P), done = k + (ph > 0.75 ? 1 : 0);
+            const A = [0.95, 1.62], B = [1.25, 1.12];
+            if (ph < 0.25) { h.x = A[0]; h.z = A[1]; h.face = H; h.pose = 'work'; h.wt = s; }
+            else if (ph < 0.5) walk(h, [A, B], (ph - 0.25) / 0.25);
+            else if (ph < 0.75) { h.x = B[0]; h.z = B[1]; h.face = -H; h.pose = 'work'; h.wt = s; }
+            else walk(h, [B, A], (ph - 0.75) / 0.25);
+            if (ph > 0.2 && ph < 0.6) h.carry = ['w', 'w'];
+            r6.items = U(20 - 2 * (k + (ph > 0.2 ? 1 : 0)));
+            R.b3.items = Wn(2 * done);
+            st.hud.push(chip('procesare rapidă', 0.95, 1.95, 1.3, { c: C.help, alpha: seg(s, 13.8, 14.2) }));
+          }
+        }
+      }
+    }
+    /* customers keep using the culoar */
+    if (s >= 10 && custHang(st, 'c1', s, 10.2, 15.8, [3.05, -3.8], [3.52, 0.85], [3.05, -3.8], 3) ) b2.items = U(3);
+    custWalk(st, 'c2', s, 13.0, 18.0, [[3.15, 5.6], [3.0, 1.0], [3.05, -3.6]]);
+    if (s > 3 && s < 13.6) { const lab = s < 5.2 ? 'burro gol' : s < 10 ? (s < 8.2 ? 'burro plin' : 'gol → locul 6') : 'plin → Camera 2'; const r = s < 5.2 ? b2 : s < 8.2 ? r6 : s < 10 ? b2 : r6; st.hud.push(chip(lab, r.x, 1.9, r.z, { c: C.help, small: true })); }
+    if (s > 13.6) {
+      st.zones.push(zone(2.3, -0.4, 3.8, 2.5, C.yes, 0.22 * seg(s, 13.6, 14.2)));
+      st.hud.push(chip('Culoar liber', 3.05, 0.05, 2.15, { c: C.yes, alpha: seg(s, 13.6, 14.0), strong: true }));
+    }
+    return st;
+  } });
+
+/* 2 · communication at 80 % */
+SC.push({ chap: '2 · Mai multă comunicare', verdict: 'no', title: 'Nu așteptăm până se umple și al doilea burro', text: 'Burro-ul plin este împins în Camera 2, iar ridicarea se cere abia când se umple și al doilea.', dur: 13,
+  cam: s => camKeys([[0, K(3.1, 1.7, 9.6, -0.3, 0.92)], [13, K(2.9, 1.6, 9.2, -0.2, 0.95)]], s),
+  f(s) {
+    const st = base(); const R = st.R, e = st.P.e11, r7 = R.r7; r7.meter = true;
+    const pTow = [[4.56, 2.2], [3.3, 2.06], [2.4, 1.96], [1.6, 1.45]], oTow = { mode: 'tow', a0: 0, a1: 0 };
+    const sTow = moveStart(r7, pTow, oTow);
+    if (s < 2.4) { const w = work11(st, s); r7.items = Wn(18 + w.rounds * 2); }
+    else if (s < 3.2) { r7.items = Wn(20); walk(e, [E11, [3.85, 1.75], sTow], (s - 2.4) / 0.8); }
+    else if (s < 6.4) { r7.items = Wn(20); move(r7, e, pTow, (s - 3.2) / 3.2, oTow); }
+    else if (s < 7.4) { r7.items = Wn(20); Object.assign(r7, { x: 1.6, z: 1.45, a: 0 }); const p = moveEnd(R.r7, pTow, oTow); walk(e, [p, [2.6, 2.0], [3.6, 1.9], E11], (s - 6.4) / 1.0); }
+    if (s >= 2.4) {
+      R.r6.items = U(9 + Math.min(11, Math.floor(seg(s, 2.6, 7.2) * 11)));
+      custHang(st, 'c1', s, 2.6, 6.2, [3.05, -3.6], [3.52, 0.9], [3.05, -3.6], 3);
+      custHang(st, 'c2', s, 4.0, 7.4, [3.2, 5.6], [3.52, 0.6], [3.2, 5.6], 3);
+    }
+    if (s >= 7.4) {
+      /* later: the spare from Camera 2 stands at 7 and fills up as well */
+      Object.assign(r7, { x: 1.6, z: 1.45, a: 0 }); r7.items = Wn(20); r7.label = null; r7.meter = false;
+      const n = Object.assign(R.b2, { x: 4.56, z: 2.2, a: 0, label: '7', meter: true });
+      const w = work11(st, s - 7.4, { period: 1.6 }); n.items = Wn(Math.min(20, 15 + w.rounds * 2));
+      R.r6.items = U(12);
+      if (s > 10) {
+        st.hud.push(bubble('Abia acum: ridicare?', E11[0], E11[1], { c: C.no, icon: 'radio', alpha: seg(s, 10, 10.3) }));
+        st.zones.push(zone(0.05, 0.25, 2.25, 2.45, C.no, 0.2 * seg(s, 10.3, 10.8)));
+        st.hud.push(chip('2 burro pline', 1.3, 1.95, 1.2, { c: C.no, alpha: seg(s, 10.5, 10.9), strong: true }));
+      }
+    }
+    if (s > 2.2 && s < 7.4) st.hud.push(chip(s < 3.2 ? 'plin' : 'plin → Camera 2', r7.x, 2.12, r7.z, { c: C.no, small: true }));
+    if (s > 7.0 && s < 8.6) st.later = 1 - Math.abs(s - 7.8) / 0.8;
+    return st;
+  } });
+
+SC.push({ chap: '2 · Mai multă comunicare', verdict: 'yes', title: 'La 80% comunicăm deja', text: 'Când burro-ul ajunge la 80%, anunțăm imediat. Runner-ul vine și îl schimbă înainte să se umple.', dur: 16,
+  cam: s => camKeys([[0, K(4.0, 2.1, 8.6, -0.38, 0.9)], [7, K(3.9, 2.6, 9.6, -0.3, 0.92)], [16, K(3.6, 3.1, 10.4, -0.22, 0.95)]], s),
+  f(s) {
+    const st = base(); const R = st.R, r7 = R.r7, run = st.P.run = { pose: 'idle', tag: 'Runner', tagC: C.run };
+    r7.meter = true;
+    const sp = R.E = { x: 3.3, z: 6.6, a: H, items: [] };
+    const pE1 = [[3.3, 6.9], [3.3, 3.25]], oE1 = { mode: 'push', a0: H, a1: 0 };
+    const pR7 = [[4.56, 2.2], [4.62, 3.35]], oR7 = { mode: 'tow', keep: true, a0: 0, a1: 0 };
+    const pE2 = [[3.3, 3.25], [3.95, 2.75], [4.56, 2.2]], oE2 = { mode: 'push', keep: true, a0: 0, a1: 0 };
+    const pGo = [[4.62, 3.35], [3.8, 4.4], [2.3, 5.4], [1.4, 6.2]], oGo = { mode: 'push', a0: 0, a1: 0.6 };
+    let w;
+    if (s < 12.3) { w = work11(st, s, { period: 2.0 }); r7.items = Wn(Math.min(18, 12 + w.rounds * 2)); }
+    else { w = work11(st, s - 12.3, { period: 2.0 }); }
+    const at80 = s >= 4.0;
+    if (at80 && s < 7.2) st.hud.push(bubble('Burro 7 la 80% · vă rog ridicare!', E11[0], E11[1], { c: C.p11, icon: 'radio', alpha: seg(s, 4.0, 4.3) }));
+    if (s < 5.0) { /* runner not yet in view */ }
+    else if (s < 8.0) { move(sp, run, pE1, (s - 5.0) / 3.0, oE1); if (s > 5.6 && s < 8.0) st.hud.push(bubble('Vin!', run.x, run.z, { c: C.run, icon: 'radio', alpha: seg(s, 5.6, 5.9) })); }
+    else {
+      Object.assign(sp, { x: 3.3, z: 3.25, a: 0 });
+      const sR7 = moveStart(r7, pR7, oR7), eR7 = moveEnd(r7, pR7, oR7);
+      const sE2 = moveStart(sp, pE2, oE2), eE2 = moveEnd(sp, pE2, oE2);
+      if (s < 8.8) walk(run, [moveEnd({ ...sp, x: 3.3, z: 6.6, a: H }, pE1, oE1), [3.9, 3.9], sR7], (s - 8.0) / 0.8);
+      else if (s < 10.0) move(r7, run, pR7, (s - 8.8) / 1.2, oR7);
+      else {
+        Object.assign(r7, { x: 4.62, z: 3.35, a: 0 });
+        const sGo = moveStart({ ...r7 }, pGo, oGo);
+        if (s < 10.8) walk(run, [eR7, [3.6, 4.0], sE2], (s - 10.0) / 0.8);
+        else if (s < 12.3) move(sp, run, pE2, (s - 10.8) / 1.5, oE2);
+        else {
+          Object.assign(sp, { x: 4.56, z: 2.2, a: 0 }); sp.items = Wn(2 * w.rounds); sp.meter = true; sp.label = '7';
+          r7.label = null; r7.meter = false;
+          if (s < 13.0) walk(run, [eE2, [3.7, 3.4], sGo], (s - 12.3) / 0.7);
+          else move(r7, run, pGo, (s - 13.0) / 3.0, oGo);
+          st.hud.push(chip('Schimbat la timp', 4.3, 2.0, 2.2, { c: C.yes, alpha: seg(s, 12.4, 12.8), strong: true }));
+          st.hud.push(chip('Camera 2 rămâne liberă', 1.15, 1.6, 1.3, { c: C.yes, alpha: seg(s, 13.2, 13.6) }));
+        }
+      }
+    }
+    if (s >= 12.3) r7.items = Wn(18);
+    return st;
+  } });
+
+/* 3 · PDA / Bluebird */
+SC.push({ chap: '3 · PDA / Bluebird', verdict: 'no', title: 'Bateria descărcată oprește stația', text: 'Dacă bateria se termină, colegul trebuie să plece de la stație, iar burro-ul se umple.', dur: 9,
+  cam: s => camKeys([[0, K(3.95, 1.6, 7.2, -0.42, 0.86)], [9, K(3.7, 2.3, 8.8, -0.32, 0.88)]], s),
+  f(s) {
+    const st = base(); const R = st.R, e = st.P.e11; R.r6.meter = true;
+    const lvl = Math.max(0, 0.08 - s * 0.04);
+    if (s < 2.2) { work11(st, s); e.batt = lvl; }
+    else { walk(e, [E11, [3.95, 2.5], [3.3, 3.6], [2.6, 4.6]], seg(s, 2.2, 5.4)); e.batt = 0; e.tag = 'pleacă să încarce'; e.tagC = C.no; if (s > 5.4) e.vis = false; }
+    if (s > 1.6 && s < 3.8) st.hud.push(chip('Baterie descărcată', e.x, 2.25, e.z, { c: C.no, alpha: seg(s, 1.6, 1.9), strong: true }));
+    let n = 10;
+    if (custHang(st, 'c1', s, 2.4, 6.0, [3.05, -3.6], [3.52, 0.95], [3.05, -3.6], 4)) n += 4;
+    if (custHang(st, 'c2', s, 3.6, 7.4, [3.15, 5.8], [3.52, 0.5], [3.15, 5.8], 4)) n += 4;
+    if (s > 7.4) n = 20; else if (s > 6.0 && n < 14) n = 14;
+    R.r6.items = U(n);
+    if (s > 5.4) {
+      st.zones.push(zone(4.2, 1.2, 4.85, 1.85, C.no, 0.3 * seg(s, 5.4, 5.8)));
+      st.hud.push(chip('Stație goală', 4.5, 0.6, 1.55, { c: C.no, alpha: seg(s, 5.4, 5.8), strong: true }));
+    }
+    return st;
+  } });
+
+SC.push({ chap: '3 · PDA / Bluebird', verdict: 'yes', title: 'Cerem din timp un aparat încărcat', text: 'Folosim PDA-ul / Bluebird-ul în mod constant. Când bateria începe să scadă, cerem din timp un aparat încărcat și lucrul continuă fără pauză.', dur: 14,
+  cam: s => camKeys([[0, K(4.0, 1.7, 7.2, -0.45, 0.86)], [7, K(3.85, 2.3, 8.8, -0.35, 0.88)], [14, K(4.0, 1.9, 7.6, -0.45, 0.86)]], s),
+  f(s) {
+    const st = base(); const R = st.R, e = st.P.e11, run = st.P.run = { pose: 'idle', tag: 'Runner', tagC: C.run, pda: true };
+    work11(st, s);
+    R.r6.items = U(9 + (s > 6 ? 2 : 0) - (s > 10 ? 2 : 0));
+    custHang(st, 'c1', s, 4.4, 9.6, [3.05, -3.6], [3.52, 0.9], [3.05, -3.6], 2);
+    const swap = s >= 9.0;
+    e.batt = swap ? 1 : Math.max(0.2, 0.34 - s * 0.05);
+    if (s > 2.8 && s < 6.2) st.hud.push(bubble('Bluebird la 20% · am nevoie de unul încărcat', E11[0], E11[1], { c: C.p11, icon: 'radio', alpha: seg(s, 2.8, 3.1) }));
+    const meet = [4.08, 1.72];
+    if (s < 4.6) run.vis = false;
+    else if (s < 8.2) { walk(run, [[3.2, 7.2], [3.6, 3.4], [3.95, 2.3], meet], (s - 4.6) / 3.6); run.batt = 1; if (s > 5.0 && s < 7.2) st.hud.push(bubble('Îl aduc!', run.x, run.z, { c: C.run, icon: 'radio', alpha: seg(s, 5.0, 5.3) })); }
+    else if (s < 9.8) {
+      run.x = meet[0]; run.z = meet[1]; run.face = 0; run.batt = swap ? 0.2 : 1; run.pose = 'work'; run.wt = s;
+      const a = st.P.e11; if (s < 9.4) { a.x = E11[0] - 0.05; a.z = E11[1] + 0.05; a.face = PI; a.pose = 'work'; a.wt = s; a.carry = null; }
+      st.hud.push(chip('Schimb rapid', 4.3, 2.35, 1.65, { c: C.yes, alpha: seg(s, 8.3, 8.6), strong: true }));
+    }
+    else { walk(run, [meet, [3.9, 2.6], [3.4, 4.6], [3.1, 7.4]], (s - 9.8) / 4.0); run.batt = 0.2; run.tag = 'Runner · la încărcat'; }
+    return st;
+  } });
+
+/* 4 · roles */
+SC.push({ chap: '4 · Roluri clar împărțite', shiftX: 150, title: 'Fiecare știe ce preia', text: 'Exemplu: secțiunea 3 răspunde de întăriri, secțiunea 1 este runner. Planul exact și un backup fix pentru casă urmează să fie stabilite.', dur: 15,
+  cam: s => camKeys([[0, K(2.6, 2.6, 13.0, -0.18, 0.98)], [15, K(2.6, 2.4, 12.4, -0.26, 0.96)]], s),
+  f(s) {
+    const st = base(); const R = st.R; work11(st, s);
+    st.P.e11.tag = 'Cabine'; st.P.e11.tagC = C.p11;
+    const h = st.P.help = { pose: 'idle', tag: 'Întăriri · secțiunea 3', tagC: C.help };
+    if (s < 2.5) h.vis = false;
+    else if (s < 6.5) walk(h, [[1.8, 6.6], [2.7, 3.2], [2.3, 2.0], [1.45, 1.55]], (s - 2.5) / 4.0);
+    else { h.x = 1.45; h.z = 1.55; h.face = H; h.pose = 'work'; h.wt = s; }
+    R.b2.items = U(12);
+    const run = st.P.run = { pose: 'idle', tag: 'Runner · secțiunea 1', tagC: C.run };
+    if (s < 4.5) run.vis = false;
+    else { const u = ((s - 4.5) % 7) / 7; const loop = [[2.9, 6.8], [3.9, 3.6], [4.7, 2.75], [3.6, 4.4], [3.05, 5.8], [5.0, 5.15], [2.9, 6.8]]; walk(run, loop, u); if (u > 0.33 && u < 0.85) run.carry = ['m', 'k', 'k']; }
+    const ca = st.P.cash = { x: -0.7, z: 4.35, face: PI, pose: 'idle', tag: 'Backup casă · de stabilit', tagC: C.muted, dashed: true };
+    if (s < 8.5) ca.vis = false;
+    st.sectLabels = true; st.cashLabel = true;
+    st.card = { t: 'roles', k: s, rows: [
+      [0.8, C.p11, 'Cabine', 'stația din Camera 1'],
+      [2.6, C.help, 'Secțiunea 3', 'întăriri la cabine'],
+      [4.6, C.run, 'Secțiunea 1', 'runner: ridicări, aparate, Kids și Man'],
+      [8.6, null, 'Casă', 'backup fix · de stabilit']
+    ] };
+    return st;
+  } });
+
+/* 5 · optional cabin round */
+SC.push({ chap: '5 · Opțiune suplimentară', verdict: 'opt', title: 'Runner-ul face întâi o tură prin cabine', text: 'Înainte să ridice burro-ul, runner-ul trece prin cabine, strânge câteva articole și anunță câte cabine sunt libere. Greu de aplicat în perioadele aglomerate.', dur: 20,
+  cam: s => camKeys([[0, K(3.2, 1.4, 10.4, -0.3, 0.92)], [4, K(3.05, -1.9, 10.8, -0.22, 1.0)], [10.5, K(3.05, -2.1, 10.6, -0.14, 1.02)], [14.5, K(3.3, 1.1, 10.6, -0.28, 0.94)], [20, K(3.5, 1.6, 10.6, -0.32, 0.94)]], s),
+  f(s) {
+    const st = base(); const R = st.R; work11(st, s);
+    const run = st.P.run = { pose: 'idle', tag: 'Runner', tagC: C.run };
+    const route = [[3.05, 6.2], [3.05, 2.6], [3.05, -0.6], [3.42, -1.0]];
+    const stops = [ /* [t0, t1, cabin, spot, face] */
+      [3.5, 4.3, 5, [3.42, -1.0], 0],
+      [6.0, 6.8, 3, [2.68, -3.0], PI],
+      [8.3, 9.1, 8, [3.42, -4.0], 0]
+    ];
+    let carry = [];
+    const took = c => stops.filter(x => s >= x[0] + 0.4 && x[2] === c).length;
+    for (const c of [3, 5, 8]) if (took(c)) { st.cab[c - 1].items = 0; carry = carry.concat(c === 5 ? ['u'] : ['u', 'u']); }
+    if (s < 3.5) walk(run, route, s / 3.5);
+    else if (s < 4.3) { run.x = 3.42; run.z = -1.0; run.face = 0; run.pose = 'work'; run.wt = s; }
+    else if (s < 6.0) walk(run, [[3.42, -1.0], [3.05, -2.0], [2.68, -3.0]], (s - 4.3) / 1.7);
+    else if (s < 6.8) { run.x = 2.68; run.z = -3.0; run.face = PI; run.pose = 'work'; run.wt = s; }
+    else if (s < 8.3) walk(run, [[2.68, -3.0], [3.05, -3.5], [3.42, -4.0]], (s - 6.8) / 1.5);
+    else if (s < 9.1) { run.x = 3.42; run.z = -4.0; run.face = 0; run.pose = 'work'; run.wt = s; }
+    else if (s < 12.6) walk(run, [[3.42, -4.0], [3.05, -3.4], [3.05, -0.3], [3.52, 0.62]], (s - 9.1) / 3.5);
+    else if (s < 13.4) { run.x = 3.52; run.z = 0.62; run.face = 0; run.pose = 'work'; run.wt = s; }
+    const hung = s >= 13.0;
+    if (!hung) run.carry = carry.length ? carry : null;
+    R.r6.items = U(9 + (hung ? 5 : 0));
+    /* cabin status as the runner passes */
+    const seen = [[1, 2.6], [5, 3.2], [2, 4.6], [6, 4.6], [3, 5.6], [7, 6.2], [4, 7.6], [8, 8.0]];
+    let free = 0;
+    for (const [n, t] of seen) if (s >= t) { const c = st.cab[n - 1]; c.tag = c.occ ? 'ocupată' : 'liberă'; c.tagA = seg(s, t, t + 0.3); if (!c.occ) free++; }
+    if (s > 2.6 && s < 13.5) st.hud.push({ t: 'counter', text: 'Cabine libere: ' + free, alpha: seg(s, 2.6, 3.0) });
+    if (s >= 13.4 && s < 16.8) st.hud.push(bubble('3 cabine libere!', run.x, run.z, { c: C.run, alpha: seg(s, 13.4, 13.7) }));
+    if (s >= 13.4) {
+      const pR7 = [[4.56, 2.2], [4.62, 3.4]], oR7 = { mode: 'tow', keep: true, a0: 0, a1: 0 };
+      const sR7 = moveStart(R.r7, pR7, oR7);
+      if (s < 16.0) { if (s >= 13.4) { run.x = 3.52; run.z = 0.62; run.face = 0; } if (s > 14.6) walk(run, [[3.52, 0.62], [3.95, 1.9], [4.2, 2.75], sR7], (s - 14.6) / 1.4); }
+      else move(R.r7, run, pR7, (s - 16.0) / 2.6, oR7);
+      R.r7.meter = true; R.r7.items = Wn(16);
+    }
+    if (s > 0.4 && s < 12.6) st.hud.push({ t: 'path', pts: [[3.05, 2.6], [3.05, -0.6], [3.42, -1.0], [3.05, -2.0], [2.68, -3.0], [3.05, -3.5], [3.42, -4.0], [3.05, -3.4], [3.05, -0.3], [3.52, 0.62]], prog: seg(s, 0.4, 3.0), c: C.run, alpha: 1 - seg(s, 12.0, 12.6) });
+    if (s > 9.1 && s < 12.6) st.hud.push(chip('+ 5 articole din cabine', run.x, 2.25, run.z, { c: C.run, small: true, alpha: seg(s, 9.1, 9.4) }));
+    return st;
+  } });
+
+/* 6 · Kids & Man */
+function r7Groups(w, m, k) { return [...Wn(w), ...Array(m).fill('m'), ...Array(k).fill('k')]; }
+SC.push({ chap: '6 · Kids și Man', verdict: 'no', title: 'Kids și Man așteaptă prea mult', text: 'Articolele de Kids și Man rămân pe burro până pleacă tot burro-ul.', dur: 7,
+  cam: s => camKeys([[0, K(4.35, 2.3, 6.6, -0.42, 0.8)], [7, K(4.25, 2.5, 7.2, -0.32, 0.82)]], s),
+  f(s) {
+    const st = base(); const R = st.R;
+    const w = work11(st, s, { period: 2.0, kinds: k => k % 2 ? ['m', 'k'] : ['w', 'm'] });
+    const r = w.rounds, m = 3 + Math.ceil(r / 2) + Math.floor(r / 2), k = 3 + Math.ceil(r / 2) - (r % 2 ? 0 : 0);
+    R.r7.items = r7Groups(9, Math.min(5, 3 + r), Math.min(5, 3 + Math.floor(r / 2)));
+    R.r7.groups = true;
+    if (s > 1.5) {
+      st.hud.push(chip('Man · așteaptă', 4.85, 2.05, 1.95, { c: C.no, icon: 'wait', alpha: seg(s, 1.5, 1.9) }));
+      st.hud.push(chip('Kids · așteaptă', 5.15, 1.75, 2.75, { c: C.no, icon: 'wait', alpha: seg(s, 2.1, 2.5) }));
+    }
+    return st;
+  } });
+
+SC.push({ chap: '6 · Kids și Man', verdict: 'yes', title: 'Kids și Man, regulat și rapid în secțiuni', text: 'La fiecare tură, runner-ul ia articolele de Kids și Man și le duce direct în secțiunile lor.', dur: 15,
+  cam: s => camKeys([[0, K(3.6, 3.7, 11.4, -0.2, 0.98)], [15, K(3.5, 3.9, 11.0, -0.12, 1.0)]], s),
+  f(s) {
+    const st = base(); const R = st.R; st.sectLabels = true;
+    const w = work11(st, s, { period: 2.0, kinds: k => k % 2 ? ['m', 'k'] : ['w', 'w'] });
+    const run = st.P.run = { pose: 'idle', tag: 'Runner', tagC: C.run };
+    const L = 7.2, loopN = Math.floor(s / L), u = (s % L) / L;
+    const pick = [4.75, 2.82], man = [3.05, 5.82], kids = [5.2, 5.12];
+    const lap = [[3.7, 4.2], pick];
+    if (u < 0.2) walk(run, [kids, [4.6, 4.2], pick], u / 0.2);
+    else if (u < 0.3) { run.x = pick[0]; run.z = pick[1]; run.face = -H; run.pose = 'work'; run.wt = s; }
+    else if (u < 0.55) walk(run, [pick, [3.9, 4.4], man], (u - 0.3) / 0.25);
+    else if (u < 0.63) { run.x = man[0]; run.z = man[1]; run.face = H; run.pose = 'work'; run.wt = s; }
+    else if (u < 0.85) walk(run, [man, [4.1, 5.5], kids], (u - 0.63) / 0.22);
+    else { run.x = kids[0]; run.z = kids[1]; run.face = H; run.pose = 'work'; run.wt = s; }
+    if (s < 0.01) { run.x = kids[0]; run.z = kids[1]; }
+    /* items: what 11 adds minus what the runner takes each lap */
+    const added = w.rounds, addM = Math.ceil(added / 2), addK = Math.ceil(added / 2);
+    const takenLaps = loopN + (u >= 0.26 ? 1 : 0);
+    const lapAt = i => Math.ceil(Math.floor((i * L + 0.26 * L) / 2.0 + 0.3) / 2);
+    const mOn = Math.max(0, 3 + addM - (takenLaps ? 3 + lapAt(takenLaps - 1) : 0));
+    const kOn = Math.max(0, 3 + addK - (takenLaps ? 3 + lapAt(takenLaps - 1) : 0));
+    R.r7.items = r7Groups(Math.min(14, 9 + Math.floor(added / 2)), mOn, kOn); R.r7.groups = true;
+    const carrying = u >= 0.26 && u < 0.85;
+    if (carrying) { const c = []; if (u < 0.6) c.push('m', 'm', 'm'); c.push('k', 'k', 'k'); run.carry = c; }
+    st.sect = [0, Math.min(8, (loopN + (u >= 0.6 ? 1 : 0)) * 3), Math.min(8, (loopN + (u >= 0.88 ? 1 : 0)) * 3)];
+    st.hud.push({ t: 'counter', text: 'Tura ' + (loopN + 1), alpha: 1 });
+    return st;
+  } });
+
+/* summary */
+SC.push({ chap: 'Rezumat', shiftX: 200, title: 'Pe scurt', text: 'Cele șase puncte pentru zona cabinelor.', dur: 13,
+  cam: s => camKeys([[0, K(3.6, 0.4, 15.5, -0.5, 1.0)], [13, K(3.6, 0.8, 14.6, -0.2, 0.96)]], s),
+  f(s) {
+    const st = base(); work11(st, s);
+    st.P.help = { x: 1.45, z: 1.55, face: H, pose: 'work', wt: s }; st.R.b2.items = U(8);
+    custWalk(st, 'c1', s, 0.5, 9, [[3.05, -4.0], [3.0, -0.8], [3.2, 2.9], [2.6, 6.8]]);
+    st.card = { t: 'list', head: 'Pe scurt', k: s, items: [
+      'Ajutorul procesează burro-ul plin în Camera 2, nu pe culoar',
+      'La 80% comunicăm ridicarea',
+      'PDA / Bluebird: cerem din timp un aparat încărcat',
+      'Roluri clare: S3 întăriri, S1 runner, backup fix la casă',
+      'Opțional: tură prin cabine și feedback despre cabinele libere',
+      'Kids și Man: duse regulat și rapid în secțiuni'
+    ] };
+    return st;
+  } });
+
+/* ---------- apply state to the 3D scene ---------- */
+function apply(st) {
+  for (const [id, g] of rackObjs) if (!st.R[id]) g.visible = false;
+  for (const id in st.R) applyRack(id, st.R[id]);
+  for (const [id, g] of peopleObjs) if (!st.P[id] || st.P[id].vis === false) g.visible = false;
+  for (const id in st.P) if (st.P[id].vis !== false) applyPerson(id, st.P[id]);
+  CABS.forEach((c, i) => {
+    const s = st.cab[i];
+    const w = s.occ ? 0.94 : 0.18;
+    c.cur.scale.z = w; c.cur.position.z = c.z1 - 0.03 - w / 2;
+    c.items.forEach((m, j) => { m.visible = j < s.items; if (m.visible) m.material = mat(C.u[(c.n * 3 + j) % C.u.length]); });
+    const id = 'k' + c.n;
+    if (s.occ) applyPerson(id, { x: c.side === 'W' ? 1.7 : 4.4, z: c.cz, face: c.side === 'W' ? PI : 0, pose: 'idle' });
+    else { const g = peopleObjs.get(id); if (g) g.visible = false; }
+  });
+  cashDesk.visible = !!st.cashLabel;
+  const sk = ['W', 'M', 'K'];
+  sk.forEach((k, i) => SECT[k].items.forEach((m, j) => m.visible = j < (st.sect[i] || 0)));
+  zonePool.forEach((m, i) => {
+    const z = st.zones[i]; m.visible = !!z && z.alpha > 0.001;
+    if (!m.visible) return;
+    m.scale.set(z.x1 - z.x0, z.z1 - z.z0, 1); m.position.set((z.x0 + z.x1) / 2, 0.012, (z.z0 + z.z1) / 2);
+    m.material.color.set(z.c); m.material.opacity = z.alpha;
+  });
+}
+
+/* ---------- 2D overlay ---------- */
+let F = 1;
+const V = new THREE.Vector3();
+function P2(x, y, z) { V.set(x, y, z).project(cam); return [(V.x + 1) / 2 * cv.width, (1 - V.y) / 2 * cv.height]; }
+const fnt = (w, px, mono) => `${w} ${px * F}px ${mono ? MONO : SANS}`;
+function rr(x, y, w, h, r) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); }
+function iconRadio(x, y, c) {
+  ctx.save(); ctx.strokeStyle = c; ctx.lineWidth = 2 * F; ctx.lineCap = 'round';
+  ctx.fillStyle = c; rr(x - 4 * F, y - 5 * F, 8 * F, 13 * F, 2 * F); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(x + 2 * F, y - 5 * F); ctx.lineTo(x + 2 * F, y - 11 * F); ctx.stroke();
+  for (const r of [9, 14]) { ctx.beginPath(); ctx.arc(x, y, r * F, -0.7, 0.7); ctx.stroke(); }
+  ctx.restore();
+}
+function iconWait(x, y, c) {
+  ctx.save(); ctx.strokeStyle = c; ctx.lineWidth = 2 * F; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.arc(x, y, 8 * F, 0, 2 * PI); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y - 5 * F); ctx.moveTo(x, y); ctx.lineTo(x + 4 * F, y + 2 * F); ctx.stroke();
+  ctx.restore();
+}
+function pill(sx, sy, text, o = {}) {
+  const size = o.small ? 18 : o.size || 21, pad = (o.small ? 9 : 12) * F, ic = o.icon ? 26 * F : 0;
+  ctx.font = fnt(o.strong ? 600 : 500, size, o.mono);
+  const tw = ctx.measureText(text).width, w = tw + pad * 2 + ic, h = size * 1.75 * F;
+  const x = sx - w / 2, y = sy - h / 2;
+  ctx.globalAlpha = o.alpha ?? 1;
+  if (o.strong) { ctx.fillStyle = o.c; rr(x, y, w, h, h / 2); ctx.fill(); }
+  else { ctx.fillStyle = C.panel; ctx.strokeStyle = o.c || C.accent; ctx.lineWidth = 1.6 * F; rr(x, y, w, h, 5 * F); ctx.fill(); ctx.stroke(); }
+  const fg = o.strong ? '#fff' : (o.c || C.accent);
+  if (o.icon === 'radio') iconRadio(x + pad + 8 * F, sy, fg); else if (o.icon === 'wait') iconWait(x + pad + 9 * F, sy, fg);
+  ctx.fillStyle = fg; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  ctx.fillText(text, x + pad + ic, sy + 0.5 * F);
+  ctx.globalAlpha = 1;
+  return { x, y, w, h };
+}
+function drawBubble(b) {
+  const [sx, sy] = P2(b.at[0], 2.02, b.at[2]);
+  const size = 22, pad = 14 * F, ic = b.icon ? 26 * F : 0;
+  ctx.font = fnt(500, size);
+  const w = ctx.measureText(b.text).width + pad * 2 + ic, h = size * 1.9 * F;
+  let x = sx - w / 2; x = Math.max(12 * F, Math.min(cv.width - w - 12 * F, x));
+  const y = sy - h - 14 * F;
+  ctx.globalAlpha = b.alpha ?? 1;
+  ctx.fillStyle = '#fff'; ctx.strokeStyle = b.c; ctx.lineWidth = 2 * F;
+  ctx.beginPath(); ctx.roundRect(x, y, w, h, 8 * F); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); const tx = Math.max(x + 14 * F, Math.min(x + w - 14 * F, sx));
+  ctx.moveTo(tx - 9 * F, y + h - 1); ctx.lineTo(tx, y + h + 13 * F); ctx.lineTo(tx + 9 * F, y + h - 1); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(tx - 9 * F, y + h); ctx.lineTo(tx, y + h + 13 * F); ctx.lineTo(tx + 9 * F, y + h); ctx.stroke();
+  if (b.icon === 'radio') iconRadio(x + pad + 8 * F, y + h / 2, b.c); else if (b.icon === 'wait') iconWait(x + pad + 9 * F, y + h / 2, b.c);
+  ctx.fillStyle = C.fg; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText(b.text, x + pad + ic, y + h / 2 + 0.5 * F);
+  ctx.globalAlpha = 1;
+}
+function drawMeter(r) {
+  const pct = Math.min(1, r.items.length / CAP), [sx, sy] = P2(r.x, 1.82, r.z);
+  const w = 104 * F, h = 12 * F, x = sx - w / 2 - 22 * F, y = sy - h / 2;
+  const c = pct >= 1 ? C.no : pct >= 0.8 ? C.warn : C.fg;
+  ctx.fillStyle = C.panel; rr(x - 6 * F, y - 8 * F, w + 66 * F, h + 16 * F, 6 * F); ctx.fill();
+  ctx.fillStyle = 'rgba(0,0,0,0.12)'; rr(x, y, w, h, h / 2); ctx.fill();
+  ctx.fillStyle = c; rr(x, y, Math.max(h, w * pct), h, h / 2); ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.fillRect(x + w * 0.8 - F, y, 2 * F, h);
+  ctx.font = fnt(500, 18, true); ctx.fillStyle = c; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  ctx.fillText(Math.round(pct * 100) + '%', x + w + 8 * F, sy + F);
+}
+function drawBattery(sx, sy, lvl) {
+  const w = 40 * F, h = 19 * F, x = sx - w / 2, y = sy - h / 2;
+  const c = lvl <= 0.05 ? C.no : lvl <= 0.25 ? C.warn : C.yes;
+  ctx.fillStyle = C.panel; rr(x - 7 * F, y - 6 * F, w + 66 * F, h + 12 * F, 6 * F); ctx.fill();
+  ctx.strokeStyle = C.fg; ctx.lineWidth = 1.6 * F; rr(x, y, w, h, 3 * F); ctx.stroke();
+  ctx.fillStyle = C.fg; ctx.fillRect(x + w + 1, y + h * 0.3, 3 * F, h * 0.4);
+  if (lvl > 0) { ctx.fillStyle = c; ctx.fillRect(x + 3 * F, y + 3 * F, (w - 6 * F) * lvl, h - 6 * F); }
+  ctx.font = fnt(500, 17, true); ctx.fillStyle = c; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  ctx.fillText(Math.round(lvl * 100) + '%', x + w + 9 * F, sy + F);
+}
+function drawPath(o) {
+  const P = mkPath(o.pts), n = 120, pts = [];
+  for (let i = 0; i <= n; i++) pts.push(P2(...[at(P, P.len * o.prog * i / n)].map(q => [q[0], 0.03, q[1]])[0]));
+  ctx.save(); ctx.globalAlpha = o.alpha ?? 1; ctx.strokeStyle = o.c; ctx.lineWidth = 4 * F; ctx.setLineDash([12 * F, 9 * F]); ctx.lineCap = 'round';
+  ctx.beginPath(); pts.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.stroke(); ctx.restore();
+}
+function drawCard(cd) {
+  const W = cv.width, Hh = cv.height;
+  if (cd.t === 'title') {
+    ctx.globalAlpha = cd.alpha; const w = Math.min(W * 0.62, 1020 * F), h = 200 * F, x = (W - w) / 2, y = Hh * 0.42 - h / 2;
+    ctx.fillStyle = C.panel; rr(x, y, w, h, 12 * F); ctx.fill(); ctx.strokeStyle = C.line; ctx.lineWidth = F; ctx.stroke();
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.font = fnt(500, 18, true); ctx.fillStyle = C.accent; ctx.fillText('ZARA IULIUS CLUJ · PUNCTE DE ÎMBUNĂTĂȚIRE', W / 2, y + 48 * F);
+    ctx.font = fnt(600, 58); ctx.fillStyle = C.fg; ctx.fillText(cd.a, W / 2, y + 104 * F);
+    ctx.font = fnt(400, 25); ctx.fillStyle = C.muted; ctx.fillText(cd.b, W / 2, y + 156 * F);
+    ctx.globalAlpha = 1;
+  } else if (cd.t === 'list' || cd.t === 'roles') {
+    const rows = cd.t === 'list' ? cd.items.map((t, i) => [0.4 + i * 0.75, C.accent, t, null]) : cd.rows;
+    const lh = (cd.t === 'list' ? 52 : 74) * F, w = (cd.t === 'list' ? 860 : 560) * F;
+    const h = lh * rows.length + (cd.t === 'list' ? 96 : 150) * F;
+    const x = cd.t === 'list' ? W - w - 64 * F : W - w - 56 * F, y = cd.t === 'list' ? 70 * F : 70 * F;
+    ctx.globalAlpha = seg(cd.k, 0, 0.4);
+    ctx.fillStyle = C.panel; rr(x, y, w, h, 12 * F); ctx.fill(); ctx.strokeStyle = C.line; ctx.lineWidth = F; ctx.stroke();
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.font = fnt(500, 17, true); ctx.fillStyle = C.accent; ctx.fillText(cd.t === 'list' ? 'REZUMAT' : 'ROLURI · EXEMPLU', x + 32 * F, y + 40 * F);
+    rows.forEach(([t0, c, a, b], i) => {
+      const yy = y + 86 * F + i * lh; ctx.globalAlpha = seg(cd.k, t0, t0 + 0.4);
+      if (cd.t === 'list') {
+        ctx.fillStyle = C.accent; ctx.font = fnt(500, 18, true); ctx.fillText(String(i + 1), x + 34 * F, yy);
+        ctx.fillStyle = C.fg; ctx.font = fnt(400, 24); ctx.fillText(a, x + 68 * F, yy);
+      } else {
+        if (c) { ctx.fillStyle = c; ctx.beginPath(); ctx.arc(x + 42 * F, yy, 11 * F, 0, 2 * PI); ctx.fill(); }
+        else { ctx.strokeStyle = C.muted; ctx.lineWidth = 2 * F; ctx.setLineDash([4 * F, 4 * F]); ctx.beginPath(); ctx.arc(x + 42 * F, yy, 10 * F, 0, 2 * PI); ctx.stroke(); ctx.setLineDash([]); }
+        ctx.fillStyle = C.fg; ctx.font = fnt(600, 25); ctx.fillText(a, x + 70 * F, yy - 13 * F);
+        ctx.fillStyle = C.muted; ctx.font = fnt(400, 21); ctx.fillText(b, x + 70 * F, yy + 16 * F);
+      }
+    });
+    if (cd.t === 'roles') { ctx.globalAlpha = seg(cd.k, 9.5, 10); ctx.fillStyle = C.muted; ctx.font = fnt(400, 20); ctx.fillText('Planul exact urmează.', x + 32 * F, y + h - 36 * F); }
+    ctx.globalAlpha = 1;
+  }
+}
+function wrap(text, maxW) {
+  const words = text.split(' '), lines = []; let cur = '';
+  for (const wd of words) { const t = cur ? cur + ' ' + wd : wd; if (ctx.measureText(t).width > maxW && cur) { lines.push(cur); cur = wd; } else cur = t; }
+  if (cur) lines.push(cur); return lines;
+}
+const VERD = { no: ['AȘA NU', C.no], yes: ['AȘA DA', C.yes], opt: ['OPȚIONAL', C.opt] };
+function drawHud(st, S, s) {
+  const W = cv.width;
+  /* quiet room labels */
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = fnt(500, 15, true);
+  const RL = [['CAMERA 1', 4.45, 1.3, -0.02], ['CAMERA 2', 1.15, 1.3, 0.18], ['CABINE', 3.05, 1.3, -4.5]];
+  if (!S.noLabels) for (const [t, x, y, z] of RL) { const [a, b] = P2(x, y, z); ctx.fillStyle = 'rgba(255,255,255,0.75)'; const tw = ctx.measureText(t).width; rr(a - tw / 2 - 6 * F, b - 11 * F, tw + 12 * F, 22 * F, 4 * F); ctx.fill(); ctx.fillStyle = C.muted; ctx.fillText(t, a, b + F); }
+  if (st.sectLabels) for (const k of ['W', 'M', 'K']) { const s0 = SECT[k], [a, b] = P2(s0.x, 1.05, s0.z); pill(a, b, s0.label, { c: C[s0.k][2] === '#cd900e' ? '#a8730a' : C[s0.k][0], small: true }); }
+  if (st.cashLabel) { const [a, b] = P2(-1.25, 1.45, 4.3); pill(a, b, 'Casă', { c: C.muted, small: true }); }
+  for (const h of st.hud) if (h.t === 'path') drawPath(h);
+  CABS.forEach((c, i) => { const cs = st.cab[i]; if (!cs.tag) return; const [a, b] = P2(c.side === 'W' ? 1.65 : 4.45, 0.15, c.cz); pill(a, b, cs.tag, { c: cs.occ ? C.muted : C.yes, strong: !cs.occ, small: true, alpha: cs.tagA }); });
+  for (const id in st.R) { const r = st.R[id]; if (r.meter) drawMeter(r); }
+  for (const id in st.R) {
+    const r = st.R[id]; if (!r.groups) continue;
+    const n = r.items.length, len = 1, step = (len - 0.06) / CAP;
+    const xs = k => { const idx = r.items.map((v, i) => v === k ? i : -1).filter(i => i >= 0); if (!idx.length) return null; return -len / 2 + 0.03 + step * ((idx[0] + idx[idx.length - 1]) / 2 + 0.5); };
+    for (const [k, lab, c] of [['w', 'Woman', C.w[0]], ['m', 'Man', C.m[0]], ['k', 'Kids', '#a8730a']]) { const lx = xs(k); if (lx == null) continue; const [a, b] = P2(r.x + Math.cos(r.a) * lx, 1.64, r.z + Math.sin(r.a) * lx); pill(a, b, lab, { c, small: true }); }
+  }
+  for (const id in st.P) {
+    const p = st.P[id]; if (p.vis === false) continue;
+    const [a, b] = P2(p.x, 1.98, p.z);
+    let y = b;
+    if (p.tag) { pill(a, y, p.tag, { c: p.tagC || C.accent, small: true }); y -= 34 * F; }
+    if (p.batt != null) drawBattery(a - 22 * F, y, p.batt);
+  }
+  for (const h of st.hud) {
+    if (h.t === 'chip') { const [a, b] = P2(...h.at); pill(a, b, h.text, h); }
+    else if (h.t === 'counter') pill(W - 190 * F, 56 * F, h.text, { c: C.run, strong: true, alpha: h.alpha });
+  }
+  for (const h of st.hud) if (h.t === 'bubble') drawBubble(h);
+  if (st.card) drawCard(st.card);
+  if (st.later) { ctx.globalAlpha = st.later * 0.55; ctx.fillStyle = C.bg; ctx.fillRect(0, 0, W, cv.height); ctx.globalAlpha = st.later; pill(W / 2, cv.height * 0.12, 'mai târziu…', { c: C.fg, strong: true, size: 26 }); ctx.globalAlpha = 1; }
+  /* verdict stamp */
+  if (S.verdict) { const [t, c] = VERD[S.verdict]; pill(48 * F + measure(t, 600, 28) / 2 + 22 * F, (REC ? 112 : 46) * F, t, { c, strong: true, size: 28, alpha: seg(s, 0.15, 0.5) }); }
+  if (REC) drawCaption(S, s);
+}
+function measure(t, w, size) { ctx.font = fnt(w, size); return ctx.measureText(t).width; }
+function drawCaption(S, s) {
+  const W = cv.width, Hh = cv.height;
+  ctx.font = fnt(500, 18, true);
+  const chapW = ctx.measureText(S.chap.toUpperCase()).width;
+  ctx.globalAlpha = 1; ctx.fillStyle = C.panel; rr(48, 32, chapW + 36, 44, 22); ctx.fill();
+  ctx.fillStyle = C.accent; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText(S.chap.toUpperCase(), 66, 55);
+  ctx.font = fnt(400, 27);
+  const lines = wrap(S.text, W - 96 - 64);
+  const h = 66 + 40 * lines.length + 28, y = Hh - h - 34;
+  ctx.fillStyle = 'rgba(255,255,255,0.94)'; rr(48, y, W - 96, h, 14); ctx.fill();
+  ctx.strokeStyle = C.line; ctx.lineWidth = 1; ctx.stroke();
+  ctx.fillStyle = C.fg; ctx.font = fnt(600, 38); ctx.fillText(S.title, 80, y + 48);
+  ctx.fillStyle = C.muted; ctx.font = fnt(400, 27);
+  lines.forEach((l, i) => ctx.fillText(l, 80, y + 98 + i * 40));
+  /* progress strip */
+  ctx.fillStyle = 'rgba(0,0,0,0.08)'; ctx.fillRect(48, Hh - 22, W - 96, 5);
+  ctx.fillStyle = C.accent; ctx.fillRect(48, Hh - 22, (W - 96) * (T_NOW / TOTAL), 5);
+}
+
+/* ---------- timeline ---------- */
+const starts = []; let TOTAL = 0; for (const s of SC) { starts.push(TOTAL); TOTAL += s.dur; }
+let T_NOW = 0;
+const sceneAt = t => { let i = SC.length - 1; while (i > 0 && starts[i] > t) i--; return i; };
+function size() {
+  if (REC) { cv.width = 1920; cv.height = 1080; F = 1; }
+  else {
+    const dpr = Math.min(2, window.devicePixelRatio || 1), w = Math.max(1, Math.round(cv.getBoundingClientRect().width * dpr));
+    cv.width = w; cv.height = Math.round(w * 9 / 16); F = Math.max(w / 1920, dpr * 0.5);
+  }
+  gl.setSize(cv.width, cv.height, false);
+  cam.aspect = cv.width / cv.height;
+  cam.updateProjectionMatrix();
+}
+function renderAt(T, withFade = true) {
+  T_NOW = Math.max(0, Math.min(TOTAL - 1e-3, T));
+  const i = sceneAt(T_NOW), S = SC[i], s = T_NOW - starts[i];
+  const st = S.f(s);
+  apply(st);
+  const c0 = S.cam(s), c = { ...c0, dist: c0.dist * 1.2, tz: c0.tz - 0.2 }, ty = 0.8;
+  const sx = (S.shiftX || 0) * cv.width / 1920, sy = REC ? 92 : 0;
+  cam.setViewOffset(cv.width, cv.height, sx, sy, cv.width, cv.height); cam.updateProjectionMatrix();
+  cam.position.set(c.tx + c.dist * Math.sin(c.yaw) * Math.cos(c.pitch), ty + c.dist * Math.sin(c.pitch), c.tz + c.dist * Math.cos(c.yaw) * Math.cos(c.pitch));
+  cam.lookAt(c.tx, ty, c.tz);
+  gl.render(scene, cam);
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.drawImage(gl.domElement, 0, 0, cv.width, cv.height);
+  drawHud(st, S, s);
+  const fade = Math.max(i ? 1 - seg(s, 0, 0.35) : 1 - seg(s, 0, 0.6), seg(T_NOW, TOTAL - 0.8, TOTAL - 0.05));
+  if (withFade && fade > 0) { ctx.globalAlpha = fade; ctx.fillStyle = C.bg; ctx.fillRect(0, 0, cv.width, cv.height); ctx.globalAlpha = 1; }
+  return i;
+}
+
+/* ---------- recorder hooks ---------- */
+async function fontsReady() {
+  try {
+    await Promise.all(['400 20px "IBM Plex Sans"', '500 20px "IBM Plex Sans"', '600 20px "IBM Plex Sans"', '500 20px "IBM Plex Mono"'].map(f => document.fonts.load(f, 'ăâîșțĂÂÎȘȚ Aa1')));
+    await document.fonts.ready;
+  } catch (e) { /* fall back to system fonts */ }
+}
+window.TOTAL = TOTAL;
+window.SCENES = SC.map((s, i) => ({ start: starts[i], dur: s.dur, chap: s.chap, title: s.title }));
+window.frameAt = (t, q = 0.93) => { renderAt(t); return cv.toDataURL('image/jpeg', q).split(',')[1]; };
+
+/* ---------- player ---------- */
+const $ = id => document.getElementById(id);
+const mmss = s => { s = Math.max(0, Math.floor(s)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+let T = 8.6, playing = false, last = 0, cur = -1;
+const chapEl = $('chapters');
+SC.forEach((s, i) => {
+  const li = document.createElement('li'), b = document.createElement('button');
+  b.type = 'button';
+  const v = s.verdict ? `<em class="${s.verdict}">${VERD[s.verdict][0]}</em>` : '';
+  b.innerHTML = `<small>${mmss(starts[i])}</small><span>${s.title}</span>${v}`;
+  b.onclick = () => { T = starts[i] + 0.01; draw(); };
+  li.appendChild(b); chapEl.appendChild(li);
+});
+SC.forEach((s, i) => { if (i) { const d = document.createElement('div'); d.className = 'tick'; d.style.left = (starts[i] / TOTAL * 100) + '%'; $('bar').appendChild(d); } });
+function draw() {
+  const i = renderAt(T, playing), S = SC[i];
+  if (i !== cur) {
+    cur = i; $('chap').textContent = S.chap; $('ttl').textContent = S.title; $('txt').textContent = S.text;
+    const v = $('verdict'); if (S.verdict) { v.hidden = false; v.textContent = VERD[S.verdict][0]; v.className = 'verdict ' + S.verdict; } else v.hidden = true;
+    [...chapEl.querySelectorAll('button')].forEach((b, k) => b.setAttribute('aria-current', k === i));
+  }
+  $('fill').style.width = (T / TOTAL * 100) + '%'; $('bar').setAttribute('aria-valuenow', Math.round(T / TOTAL * 100));
+  $('time').textContent = mmss(T) + ' / ' + mmss(TOTAL);
+}
+function frame(now) { if (!playing) return; const dt = Math.min(0.1, (now - last) / 1000); last = now; T += dt; if (T >= TOTAL) { T = TOTAL - 0.001; setPlay(false); } draw(); requestAnimationFrame(frame); }
+function setPlay(p) { playing = p; $('play').textContent = p ? 'Pauză' : (T >= TOTAL - 0.01 ? 'Din nou' : 'Redă'); if (p) { last = performance.now(); requestAnimationFrame(frame); } }
+$('play').onclick = () => { if (!playing && T >= TOTAL - 0.01) T = 0; setPlay(!playing); draw(); };
+$('prev').onclick = () => { const i = sceneAt(T); T = (T - starts[i] > 1.2 || i === 0) ? starts[i] + 0.01 : starts[i - 1] + 0.01; draw(); };
+$('next').onclick = () => { const i = sceneAt(T); if (i < SC.length - 1) T = starts[i + 1] + 0.01; draw(); };
+const bar = $('bar');
+function seek(e) { const r = bar.getBoundingClientRect(); T = cl((e.clientX - r.left) / r.width) * TOTAL * 0.9999; draw(); }
+let sd = false;
+bar.addEventListener('pointerdown', e => { sd = true; bar.setPointerCapture(e.pointerId); seek(e); });
+bar.addEventListener('pointermove', e => { if (sd) seek(e); });
+bar.addEventListener('pointerup', () => sd = false);
+bar.addEventListener('keydown', e => { if (e.key === 'ArrowRight') { T = Math.min(TOTAL - 0.001, T + 3); draw(); } else if (e.key === 'ArrowLeft') { T = Math.max(0, T - 3); draw(); } });
+document.addEventListener('keydown', e => { if (e.key === ' ' && e.target === document.body) { e.preventDefault(); $('play').click(); } });
+window.addEventListener('resize', () => { if (!REC) { size(); draw(); } });
+
+size();
+await fontsReady();
+if (REC) { renderAt(0); window.__ready = true; }
+else { size(); draw(); }
+</script>
+
+</body>
+</html>
